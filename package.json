@@ -1,0 +1,124 @@
+{
+  "name": "explorer-line-count",
+  "displayName": "Explorer Line Count",
+  "publisher": "philau2512",
+  "description": "Display line count for files directly in the VS Code Explorer view.",
+  "version": "0.0.3",
+  "engines": {
+    "vscode": "^1.107.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "line count",
+    "explorer",
+    "lines of code",
+    "loc",
+    "stats",
+    "badge"
+  ],
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philau2512/explorer-line-count.git"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Explorer Line Count",
+      "properties": {
+        "explorerLineCount.allowedExtensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            ".ts",
+            ".tsx",
+            ".js",
+            ".jsx",
+            ".dart",
+            ".py",
+            ".java",
+            ".go",
+            ".rs",
+            ".cpp",
+            ".c",
+            ".h",
+            ".json",
+            ".yaml",
+            ".yml",
+            ".html",
+            ".css",
+            ".scss",
+            ".md",
+            ".sql",
+            ".sh"
+          ],
+          "description": "File extensions to show line count (include the dot, e.g. '.ts')"
+        },
+        "explorerLineCount.ignoredFolders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "node_modules",
+            ".git",
+            "dist",
+            "build",
+            ".dart_tool",
+            ".idea",
+            ".vscode"
+          ],
+          "description": "Folder names to ignore when counting lines"
+        },
+        "explorerLineCount.maxFileSize": {
+          "type": "number",
+          "default": 2,
+          "minimum": 0.1,
+          "maximum": 50,
+          "description": "Maximum file size in MB to count lines for (files larger than this are skipped)"
+        },
+        "explorerLineCount.minLineDisplay": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Only show badge for files with at least this many lines (tooltip still shows all)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.107.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.56.1",
+    "eslint": "^9.39.3",
+    "esbuild": "^0.27.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
