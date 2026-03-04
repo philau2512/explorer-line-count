@@ -3,7 +3,7 @@
   "displayName": "Explorer Line Count",
   "publisher": "philau2512",
   "description": "Display line count for files directly in the VS Code Explorer view.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "engines": {
     "vscode": "^1.107.0"
@@ -40,27 +40,11 @@
             "type": "string"
           },
           "default": [
-            ".ts",
-            ".tsx",
-            ".js",
-            ".jsx",
-            ".dart",
-            ".py",
-            ".java",
-            ".go",
-            ".rs",
-            ".cpp",
-            ".c",
-            ".h",
-            ".json",
-            ".yaml",
-            ".yml",
-            ".html",
-            ".css",
-            ".scss",
-            ".md",
-            ".sql",
-            ".sh"
+            ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".vue", ".svelte", ".astro",
+            ".dart", ".py", ".java", ".kt", ".cs", ".go", ".rs", ".cpp", ".hpp", ".c", ".h",
+            ".php", ".rb", ".swift", ".sql", ".graphql", ".gql",
+            ".json", ".yaml", ".yml", ".toml", ".xml", ".html", ".css", ".scss", ".sass", ".less",
+            ".md", ".sh", ".bat", ".ps1", ".env"
           ],
           "description": "File extensions to show line count (include the dot, e.g. '.ts')"
         },

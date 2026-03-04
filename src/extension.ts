@@ -17,10 +17,11 @@ function loadConfig(): ExtConfig {
   const c = vscode.workspace.getConfiguration("explorerLineCount");
 
   const exts: string[] = c.get("allowedExtensions", [
-    ".ts", ".tsx", ".js", ".jsx", "mjs", ".dart", ".py",
-    ".java", ".go", ".rs", ".cpp", ".c", ".h",
-    ".json", ".yaml", ".yml", ".html", ".css", ".scss",
-    ".md", ".sql", ".sh",
+    ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".vue", ".svelte", ".astro",
+    ".dart", ".py", ".java", ".kt", ".cs", ".go", ".rs", ".cpp", ".hpp", ".c", ".h",
+    ".php", ".rb", ".swift", ".sql", ".graphql", ".gql",
+    ".json", ".yaml", ".yml", ".toml", ".xml", ".html", ".css", ".scss", ".sass", ".less",
+    ".md", ".sh", ".bat", ".ps1", ".env"
   ]);
 
   const folders: string[] = c.get("ignoredFolders", [

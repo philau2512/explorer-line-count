@@ -46,4 +46,4 @@ This extension is built with performance in mind:
 If you encounter any bugs or have feature requests, please open an issue on the [GitHub Repository](https://github.com/philau2512/explorer-line-count/issues).
 
 ---
-**Enjoying Explorer Line Count?** Leave a review on the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=philau2512.explorer-line-count) ⭐⭐⭐⭐⭐
+**Enjoying Explorer Line Count?** Leave a review on the [Open VSX Registry](https://open-vsx.org/extension/philau2512/explorer-line-count) ⭐⭐⭐⭐⭐
