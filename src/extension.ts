@@ -17,7 +17,7 @@ function loadConfig(): ExtConfig {
   const c = vscode.workspace.getConfiguration("explorerLineCount");
 
   const exts: string[] = c.get("allowedExtensions", [
-    ".ts", ".tsx", ".js", ".jsx", ".dart", ".py",
+    ".ts", ".tsx", ".js", ".jsx", "mjs", ".dart", ".py",
     ".java", ".go", ".rs", ".cpp", ".c", ".h",
     ".json", ".yaml", ".yml", ".html", ".css", ".scss",
     ".md", ".sql", ".sh",
@@ -42,7 +42,8 @@ function loadConfig(): ExtConfig {
 // ─── Cache ────────────────────────────────────────────────────────────────────
 
 const MAX_LINES = 10_000;
-const lineCache = new Map<string, number>();
+type CacheEntry = { lines: number } | { tooLarge: true };
+const lineCache = new Map<string, CacheEntry>();
 const pending = new Set<string>();
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -64,17 +65,17 @@ function shouldIgnore(uri: vscode.Uri): boolean {
   return false;
 }
 
-async function countLinesAsync(filePath: string): Promise<number | null> {
+async function countLinesAsync(filePath: string): Promise<CacheEntry | null> {
   try {
     const stat = await fs.promises.stat(filePath);
 
     if (stat.size > cfg.maxFileSize) {
-      return null;
+      return { tooLarge: true };
     }
 
     const content = await fs.promises.readFile(filePath, "utf8");
     const lines = content.split(/\r?\n/).length;
-    return Math.min(lines, MAX_LINES);
+    return { lines: Math.min(lines, MAX_LINES) };
   } catch {
     return null;
   }
@@ -124,15 +125,23 @@ class LineDecorationProvider implements vscode.FileDecorationProvider {
     // If already cached → return immediately
     const cached = lineCache.get(filePath);
     if (cached !== undefined) {
-      // minLineDisplay filter: hide badge but tooltip still works
-      if (cached < cfg.minLineDisplay) {
+      if ("tooLarge" in cached) {
         return {
-          tooltip: `${cached} lines`,
+          badge: " ", // using space to ensure UI picks it up without looking too bad
+          tooltip: `File limit exceeded (> ${Math.round(cfg.maxFileSize / (1024 * 1024))}MB)`,
+        };
+      }
+
+      // minLineDisplay filter: hide badge but tooltip still works
+      if (cached.lines < cfg.minLineDisplay) {
+        return {
+          badge: " ", // space ensures the tooltip behaves properly when hovered
+          tooltip: `${cached.lines} lines`,
         };
       }
       return {
-        badge: formatBadge(cached),
-        tooltip: `${cached} lines`,
+        badge: formatBadge(cached.lines),
+        tooltip: `${cached.lines} lines`,
       };
     }
 
@@ -201,7 +210,7 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      lineCache.set(doc.uri.fsPath, doc.lineCount);
+      lineCache.set(doc.uri.fsPath, { lines: doc.lineCount });
       provider.fire(doc.uri);
     })
   );
