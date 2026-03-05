@@ -2,6 +2,12 @@
 
 All notable changes to the "explorer-line-count" extension will be documented in this file.
 
+## [0.0.6] - 2026-03-05
+
+### Added & Fixed
+- 🚀 **Status Bar Integration:** The active file's exact line count is now smoothly displayed on the bottom right Status Bar, bypassing Explorer's 2-character limits and offering quick insights at a glance.
+- 🛠️ **Compatibility Fix:** Lowered the minimum required VS Code engine version to `1.90.0`. This ensures the extension works flawlessly on alternative IDEs like Cursor and older VS Code setups!
+
 ## [0.0.5] - 2026-03-05
 
 ### Added & Fixed

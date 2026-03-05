@@ -213,6 +213,11 @@ export function activate(context: vscode.ExtensionContext) {
 
       lineCache.set(doc.uri.fsPath, { lines: doc.lineCount });
       provider.fire(doc.uri);
+      
+      // Update status bar if it's the active document
+      if (vscode.window.activeTextEditor?.document.uri.toString() === doc.uri.toString()) {
+        updateStatusBarItem(vscode.window.activeTextEditor);
+      }
     })
   );
 
@@ -231,6 +236,28 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // ── Status Bar Item ──────────────────────────────────────────────────────
+  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  context.subscriptions.push(statusBarItem);
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem)
+  );
+
+  function updateStatusBarItem(editor: vscode.TextEditor | undefined) {
+    if (editor && editor.document.uri.scheme === 'file') {
+      const lines = editor.document.lineCount;
+      statusBarItem.text = `$(list-ordered) ${lines} lines`;
+      statusBarItem.tooltip = "Current File Line Count";
+      statusBarItem.show();
+    } else {
+      statusBarItem.hide();
+    }
+  }
+
+  // Initial call
+  updateStatusBarItem(vscode.window.activeTextEditor);
 }
 
 export function deactivate() {}

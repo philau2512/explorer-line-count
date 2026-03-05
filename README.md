@@ -11,7 +11,8 @@
 Get a quick overview of your codebase size without opening files! **Explorer Line Count** adds elegant, unobtrusive badges to files in your VS Code Explorer pane showing their exact line count.
 
 - **Instant Visibility:** See file sizes at a glance.
-- **Smart Formatting:** Large files use compact formats like `1h` (100+), `2k` (2000+), `9k` (9000+) to keep the UI clean.
+- **Detailed Status Bar:** Exact file sizes (e.g., `150 lines`) are instantly shown in your bottom right Status Bar when you open a file.
+- **Smart Formatting:** Large files use compact formats on the Explorer badge like `1h` (100+), `2k` (2000+), `9k` (9000+) to keep the UI clean.
 - **Highly Configurable:** Control exactly which files show counts based on extension or file size.
 - **Performance Optimized:** Uses caching, debouncing, and batch invalidation to ensure your editor remains lightning fast.
 - **Clean Tooltips:** Hover over a badge to see the exact line count.
@@ -19,6 +20,7 @@ Get a quick overview of your codebase size without opening files! **Explorer Lin
 <div align="center">
   <!-- TODO: Replace with actual screenshot or GIF -->
   <img src="./images/screenshot.png" alt="Explorer Line Count in Action" width="400" />
+  <img src="./images/statusbar-line.png" alt="Explorer Line Count Status Bar" width="400" />
 </div>
 
 ## ⚙️ Configuration
