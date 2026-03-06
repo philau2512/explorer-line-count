@@ -11,7 +11,7 @@
 Get a quick overview of your codebase size without opening files! **Explorer Line Count** adds elegant, unobtrusive badges to files in your VS Code Explorer pane showing their exact line count.
 
 - **Instant Visibility:** See file sizes at a glance.
-- **Detailed Status Bar:** Exact file sizes (e.g., `150 lines`) are instantly shown in your bottom right Status Bar when you open a file.
+- **Detailed Status Bar:** Exact file sizes and line counts (e.g., `150 lines - 2.5KB`) are instantly shown in your bottom right Status Bar when you open a file.
 - **Smart Formatting:** Large files use compact formats on the Explorer badge like `1h` (100+), `2k` (2000+), `9k` (9000+) to keep the UI clean.
 - **Highly Configurable:** Control exactly which files show counts based on extension or file size.
 - **Performance Optimized:** Uses caching, debouncing, and batch invalidation to ensure your editor remains lightning fast.
@@ -39,9 +39,11 @@ Tweak the extension to your exact needs in VS Code Settings (`Ctrl+,` or `Cmd+,`
 ## ⚡ Performance
 
 This extension is built with performance in mind:
-1. **Asynchronous Reading:** File reading is non-blocking.
-2. **Result Caching:** Line counts are saved in memory and only updated on save/rename/delete.
-3. **Smart Skip:** It ignores `.git`, `node_modules`, and large binaries by default.
+1. **Asynchronous Reading:** File reading and metadata retrieval are completely non-blocking.
+2. **Metadata Efficiency:** Uses `vscode.workspace.fs.stat` for lightning-fast file size checks across local and remote environments.
+3. **Memory Safety:** Does not load file contents into memory for size checks, preventing lag on large files.
+4. **Result Caching:** Line counts are saved in memory and only updated on save/rename/delete.
+5. **Smart Skip:** It ignores `.git`, `node_modules`, and large binaries by default.
 
 ## 🐛 Issues & Feedback
 

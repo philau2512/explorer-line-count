@@ -3,7 +3,7 @@
   "displayName": "Explorer Line Count",
   "publisher": "philau2512",
   "description": "Display line count for files directly in the VS Code Explorer view.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"

@@ -2,6 +2,13 @@
 
 All notable changes to the "explorer-line-count" extension will be documented in this file.
 
+## [0.0.7] - 2026-03-06
+
+### Added & Optimized
+- 📊 **File Size in Status Bar:** Now displays the file size (B, KB, MB, etc.) alongside the line count in the status bar (e.g., `263 lines - 8.4KB`).
+- ⚡ **Performance 2.0:** Migrated to `vscode.workspace.fs.stat` for ultra-fast, memory-safe metadata retrieval. Removed heavy memory-intensive fallbacks to ensure zero lag, even with massive files.
+- 🛡️ **Remote Ready:** Enhanced compatibility for VS Code Remote (SSH, WSL, Codespaces).
+
 ## [0.0.6] - 2026-03-05
 
 ### Added & Fixed
