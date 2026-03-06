@@ -95,6 +95,16 @@ function formatBadge(lines: number): string {
   return String(lines);
 }
 
+function formatBytes(bytes: number): string {
+  if (bytes === 0) {
+    return "0B";
+  }
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + sizes[i];
+}
+
 // ─── Decoration Provider ──────────────────────────────────────────────────────
 
 class LineDecorationProvider implements vscode.FileDecorationProvider {
@@ -245,11 +255,26 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem)
   );
 
-  function updateStatusBarItem(editor: vscode.TextEditor | undefined) {
+  async function updateStatusBarItem(editor: vscode.TextEditor | undefined) {
     if (editor && editor.document.uri.scheme === 'file') {
-      const lines = editor.document.lineCount;
-      statusBarItem.text = `$(list-ordered) ${lines} lines`;
-      statusBarItem.tooltip = "Current File Line Count";
+      const uri = editor.document.uri;
+      let sizeStr = "";
+      try {
+        const stats = await vscode.workspace.fs.stat(uri);
+        sizeStr = ` - ${formatBytes(stats.size)}`;
+      } catch {
+        // If stat fails (e.g. file doesn't exist yet), don't show size
+        sizeStr = "";
+      }
+
+      const cached = lineCache.get(uri.fsPath);
+      if (cached && "lines" in cached) {
+        statusBarItem.text = `$(list-ordered) ${cached.lines} lines${sizeStr}`;
+      } else {
+        statusBarItem.text = `$(list-ordered) ${editor.document.lineCount} lines${sizeStr}`;
+      }
+      
+      statusBarItem.tooltip = "Current File Line Count & Size";
       statusBarItem.show();
     } else {
       statusBarItem.hide();
