@@ -82,7 +82,7 @@ async function countLinesAsync(filePath: string): Promise<CacheEntry | null> {
   }
 }
 
-function formatBadge(lines: number): string {
+export function formatBadge(lines: number): string {
   if (lines >= 10000) {
     return "9k";
   }
@@ -95,7 +95,7 @@ function formatBadge(lines: number): string {
   return String(lines);
 }
 
-function formatBytes(bytes: number): string {
+export function formatBytes(bytes: number): string {
   if (bytes === 0) {
     return "0B";
   }
@@ -245,6 +245,50 @@ export function activate(context: vscode.ExtensionContext) {
         lineCache.delete(f.oldUri.fsPath);
       }
     })
+  );
+
+  // ── External file changes (AI edits, git, external tools) ───────────────
+  const watcherDebounce = new Map<string, ReturnType<typeof setTimeout>>();
+
+  const handleExternalChange = (uri: vscode.Uri) => {
+    if (uri.scheme !== "file" || shouldIgnore(uri)) {
+      return;
+    }
+
+    const filePath = uri.fsPath;
+    const existing = watcherDebounce.get(filePath);
+    if (existing) {
+      clearTimeout(existing);
+    }
+
+    watcherDebounce.set(filePath, setTimeout(async () => {
+      watcherDebounce.delete(filePath);
+
+      // Invalidate so provider re-reads from disk on next provideFileDecoration call
+      lineCache.delete(filePath);
+      pending.delete(filePath);
+
+      const result = await countLinesAsync(filePath);
+      if (result !== null) {
+        lineCache.set(filePath, result);
+        provider.fire(uri);
+
+        // Sync status bar when this is the currently active file
+        if (vscode.window.activeTextEditor?.document.uri.fsPath === filePath) {
+          updateStatusBarItem(vscode.window.activeTextEditor);
+        }
+      }
+    }, 250));
+  };
+
+  const fsWatcher = vscode.workspace.createFileSystemWatcher("**/*");
+  context.subscriptions.push(
+    fsWatcher,
+    fsWatcher.onDidChange(handleExternalChange),
+    // Pre-populate cache for files created by AI or external tools so badge shows immediately
+    fsWatcher.onDidCreate(handleExternalChange),
+    // Clear pending debounce timers so callbacks don't fire against disposed resources
+    { dispose: () => { watcherDebounce.forEach(t => clearTimeout(t)); watcherDebounce.clear(); } },
   );
 
   // ── Status Bar Item ──────────────────────────────────────────────────────

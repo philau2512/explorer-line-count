@@ -2,6 +2,14 @@
 
 All notable changes to the "explorer-line-count" extension will be documented in this file.
 
+## [0.0.8] - 2026-06-26
+
+### Fixed & Added
+- 🤖 **AI Edit Detection:** Explorer badge and status bar now refresh automatically within ~300 ms when an AI tool (Claude Code, Cursor, Copilot…) edits a file directly on disk. No more Ctrl+S required — powered by a `FileSystemWatcher` with per-file 250 ms debounce.
+- ✨ **Instant Badge on New Files:** Badge appears immediately when an AI tool creates a new file — no need to navigate away and back in Explorer.
+- 🧪 **Unit Tests:** Added 19 test cases covering `formatBadge` and `formatBytes` edge cases, plus extension activation smoke tests.
+- 🛡️ **Safer Deactivation:** Pending debounce timers are now flushed on extension deactivate, preventing stale callbacks from firing against disposed resources.
+
 ## [0.0.7] - 2026-03-06
 
 ### Added & Optimized

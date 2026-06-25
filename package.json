@@ -3,7 +3,7 @@
   "displayName": "Explorer Line Count",
   "publisher": "philau2512",
   "description": "Display line count for files directly in the VS Code Explorer view.",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
@@ -40,11 +40,47 @@
             "type": "string"
           },
           "default": [
-            ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".vue", ".svelte", ".astro",
-            ".dart", ".py", ".java", ".kt", ".cs", ".go", ".rs", ".cpp", ".hpp", ".c", ".h",
-            ".php", ".rb", ".swift", ".sql", ".graphql", ".gql",
-            ".json", ".yaml", ".yml", ".toml", ".xml", ".html", ".css", ".scss", ".sass", ".less",
-            ".md", ".sh", ".bat", ".ps1", ".env"
+            ".ts",
+            ".tsx",
+            ".js",
+            ".jsx",
+            ".mjs",
+            ".cjs",
+            ".vue",
+            ".svelte",
+            ".astro",
+            ".dart",
+            ".py",
+            ".java",
+            ".kt",
+            ".cs",
+            ".go",
+            ".rs",
+            ".cpp",
+            ".hpp",
+            ".c",
+            ".h",
+            ".php",
+            ".rb",
+            ".swift",
+            ".sql",
+            ".graphql",
+            ".gql",
+            ".json",
+            ".yaml",
+            ".yml",
+            ".toml",
+            ".xml",
+            ".html",
+            ".css",
+            ".scss",
+            ".sass",
+            ".less",
+            ".md",
+            ".sh",
+            ".bat",
+            ".ps1",
+            ".env"
           ],
           "description": "File extensions to show line count (include the dot, e.g. '.ts')"
         },
@@ -95,15 +131,15 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.90.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "22.x",
-    "typescript-eslint": "^8.56.1",
-    "eslint": "^9.39.3",
+    "@types/node": "^22.20.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "esbuild": "^0.27.3",
+    "eslint": "^9.39.3",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.56.1"
   }
 }
