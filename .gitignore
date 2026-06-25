@@ -130,3 +130,9 @@ dist/
 
 .vscode/
 .agent/
+plans/
+.repomixignore
+release-manifest.json
+.claude/
+docs/
+.vscode-test/
