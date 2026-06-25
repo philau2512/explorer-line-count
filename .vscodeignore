@@ -12,3 +12,13 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+# AI tooling & project management — never ship these
+.claude/**
+.agent/**
+plans/**
+docs/**
+release-manifest.json
+.repomixignore
+# Build artifacts
+*.vsix
+package-lock.json
