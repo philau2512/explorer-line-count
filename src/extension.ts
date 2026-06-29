@@ -281,15 +281,98 @@ export function activate(context: vscode.ExtensionContext) {
     }, 250));
   };
 
-  const fsWatcher = vscode.workspace.createFileSystemWatcher("**/*");
+  const watchers: vscode.FileSystemWatcher[] = [];
+
+  const registerWatchers = () => {
+    // Dispose previous watchers
+    watchers.forEach((w) => w.dispose());
+    watchers.length = 0;
+
+    if (vscode.workspace.workspaceFolders) {
+      for (const folder of vscode.workspace.workspaceFolders) {
+        const watcher = vscode.workspace.createFileSystemWatcher(
+          new vscode.RelativePattern(folder, "**/*")
+        );
+        watcher.onDidChange(handleExternalChange);
+        watcher.onDidCreate(handleExternalChange);
+        watcher.onDidDelete((uri) => {
+          lineCache.delete(uri.fsPath);
+          provider.fire(uri);
+        });
+        watchers.push(watcher);
+        context.subscriptions.push(watcher);
+      }
+    } else {
+      // Fallback if no workspace folder is open
+      const watcher = vscode.workspace.createFileSystemWatcher("**/*");
+      watcher.onDidChange(handleExternalChange);
+      watcher.onDidCreate(handleExternalChange);
+      watcher.onDidDelete((uri) => {
+        lineCache.delete(uri.fsPath);
+        provider.fire(uri);
+      });
+      watchers.push(watcher);
+      context.subscriptions.push(watcher);
+    }
+  };
+
+  registerWatchers();
+
+  // Re-register watchers when workspace folders change dynamically
   context.subscriptions.push(
-    fsWatcher,
-    fsWatcher.onDidChange(handleExternalChange),
-    // Pre-populate cache for files created by AI or external tools so badge shows immediately
-    fsWatcher.onDidCreate(handleExternalChange),
-    // Clear pending debounce timers so callbacks don't fire against disposed resources
-    { dispose: () => { watcherDebounce.forEach(t => clearTimeout(t)); watcherDebounce.clear(); } },
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      registerWatchers();
+    })
   );
+
+  // ── Listen for in-memory document changes (faster, I/O-free badge sync) ──
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeTextDocument((e) => {
+      const uri = e.document.uri;
+      if (uri.scheme !== "file" || shouldIgnore(uri)) {
+        return;
+      }
+
+      const filePath = uri.fsPath;
+      const newLineCount = e.document.lineCount;
+
+      // In-memory lineCount compare to avoid unnecessary badge updates when typing on the same line
+      const cached = lineCache.get(filePath);
+      if (cached && "lines" in cached && cached.lines === newLineCount) {
+        return;
+      }
+
+      // Pre-fill the cache instantly using editor data
+      lineCache.set(filePath, { lines: newLineCount });
+
+      // Debounce badge updates to prevent layout thrashing while typing
+      let existing = watcherDebounce.get(filePath);
+      if (existing) {
+        clearTimeout(existing);
+      }
+
+      watcherDebounce.set(
+        filePath,
+        setTimeout(() => {
+          watcherDebounce.delete(filePath);
+          provider.fire(uri);
+
+          if (vscode.window.activeTextEditor?.document.uri.fsPath === filePath) {
+            updateStatusBarItem(vscode.window.activeTextEditor);
+          }
+        }, 300)
+      );
+    })
+  );
+
+  // Clear pending debounce timers and active watchers on extension deactivation
+  context.subscriptions.push({
+    dispose: () => {
+      watcherDebounce.forEach((t) => clearTimeout(t));
+      watcherDebounce.clear();
+      watchers.forEach((w) => w.dispose());
+    },
+  });
 
   // ── Status Bar Item ──────────────────────────────────────────────────────
   const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);

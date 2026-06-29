@@ -2,6 +2,14 @@
 
 All notable changes to the "explorer-line-count" extension will be documented in this file.
 
+## [1.0.0] - 2026-06-30
+
+### Enhanced & Fixed
+- ⚡ **Enhanced Sync Reliability:** Upgraded `FileSystemWatcher` to use `vscode.RelativePattern` per workspace folder to prevent dropped events on Windows/Linux.
+- 🔄 **Real-Time Editor Sync:** Added `onDidChangeTextDocument` listener to sync badge counts instantly in-memory, avoiding disk I/O when files are open in VS Code.
+- 📂 **Dynamic Workspace Support:** Watchers automatically refresh when workspace folders are added or removed dynamically.
+- 🛡️ **Memory Safety:** Debounced badge rendering updates and cleanly disposed of all filesystem watchers and timers to prevent memory leaks.
+
 ## [0.0.8] - 2026-06-26
 
 ### Fixed & Added
